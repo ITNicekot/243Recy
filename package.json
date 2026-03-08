@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start:dev": "ts-node src/main.ts",
-    "build": "tsc",
+    "build": "nest build",
     "start": "node dist/main.js"
   },
   "dependencies": {
@@ -30,6 +30,7 @@
     "socket.io": "^4.8.0"
   },
   "devDependencies": {
+    "@nestjs/cli": "^11.0.16",
     "@types/node": "^22.10.2",
     "@types/passport-jwt": "^4.0.1",
     "prisma": "^5.0.0",
