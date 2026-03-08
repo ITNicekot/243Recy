@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id
+  phone     String   @unique
+  avatarUrl String?  // Nouveau champ
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  alerts    Alert[]
+  likes     Like[]
+  comments  Comment[]
+  transactions Transaction[]
+  badges    UserBadge[]
+  challenges UserChallenge[]
+}
+
+model Alert {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  mediaUrl  String?
+  latitude  Float
+  longitude Float
+  status    String   @default("pending")
+  isAquatic Boolean? @default(false)
+  waterType String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  likes     Like[]
+  comments  Comment[]
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  alertId   String
+  alert     Alert    @relation(fields: [alertId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, alertId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  alertId   String
+  alert     Alert    @relation(fields: [alertId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Float
+  type      String
+  createdAt DateTime @default(now())
+}
+
+model Badge {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  imageUrl    String?
+  criteria    String
+  createdAt   DateTime @default(now())
+  users       UserBadge[]
+}
+
+model UserBadge {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+  earnedAt  DateTime @default(now())
+
+  @@id([userId, badgeId])
+}
+
+model Challenge {
+  id           String   @id @default(uuid())
+  name         String
+  description  String
+  goal         Int
+  rewardPoints Int
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime @default(now())
+  users        UserChallenge[]
+}
+
+model UserChallenge {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  progress    Int      @default(0)
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+
+  @@unique([userId, challengeId])
+}
