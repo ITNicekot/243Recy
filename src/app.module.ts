@@ -13,7 +13,7 @@ import { UsersModule } from './modules/users/users.module'; // ← Ajout
 @Module({
   imports: [
     AlertsModule,
-    UploadModule,
+   /* UploadModule,*/
     AuthModule,
     LikesModule,
     CommentsModule,
